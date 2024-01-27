@@ -5,7 +5,7 @@ public:
         for(int i=0;i<nums.size();i++){
             int complement=target-nums[i];
         if(numToindex.find(complement)!=numToindex.end()){
-        return{numToindex [complement],i};
+        return{numToindex[complement],i};
         }
     numToindex[nums[i]]=i;
     }
