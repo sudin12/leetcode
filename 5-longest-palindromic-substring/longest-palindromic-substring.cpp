@@ -2,33 +2,46 @@ class Solution {
 public:
     string longestPalindrome(string s) {
         if (s.empty()) return "";
-        int n = s.size();
-        vector<vector<bool>> dp(n, vector<bool>(n, false));
-        int start = 0, max_length = 1;
         
-        // All substrings of length 1 are palindromes
-        for (int i = 0; i < n; ++i)
-            dp[i][i] = true;
+        string padded = preprocess(s);
+        int n = padded.size();
         
-        // Check for substrings of length 2
-        for (int i = 0; i < n - 1; ++i) {
-            if (s[i] == s[i + 1]) {
-                dp[i][i + 1] = true;
-                start = i;
-                max_length = 2;
+        vector<int> palindromeLengths(n, 0);
+        int center = 0, right = 0;
+        
+        for (int i = 1; i < n - 1; ++i) {
+            int mirror = 2 * center - i;
+            if (i < right) {
+                palindromeLengths[i] = min(right - i, palindromeLengths[mirror]);
+            }
+            
+            while (padded[i + (1 + palindromeLengths[i])] == padded[i - (1 + palindromeLengths[i])]) {
+                palindromeLengths[i]++;
+            }
+            
+            if (i + palindromeLengths[i] > right) {
+                center = i;
+                right = i + palindromeLengths[i];
             }
         }
-        // Check for substrings of length greater than 2
-        for (int length = 3; length <= n; ++length) {
-            for (int i = 0; i < n - length + 1; ++i) {
-                int j = i + length - 1;
-                if (s[i] == s[j] && dp[i + 1][j - 1]) {
-                    dp[i][j] = true;
-                    start = i;
-                    max_length = length;
-                }
+        
+        int maxLen = 0, centerIndex = 0;
+        for (int i = 1; i < n - 1; ++i) {
+            if (palindromeLengths[i] > maxLen) {
+                maxLen = palindromeLengths[i];
+                centerIndex = i;
             }
         }
-        return s.substr(start, max_length);
+        
+        return s.substr((centerIndex - maxLen) / 2, maxLen);
+    }  
+private:
+    string preprocess(const string& s) {
+        string result = "^";
+        for (char c : s) {
+            result += "#" + string(1, c);
+        }
+        result += "#$";
+        return result;
     }
 };
