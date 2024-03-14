@@ -1,7 +1,7 @@
 
 class Solution {
 public:
-    int numSubarraysWithSum(std::vector<int>& nums, int goal) {
+    int numSubarraysWithSum(vector<int>& nums, int goal) {
         unordered_map<int, int> prefixSumCount;
         int prefixSum = 0;
         int count = 0;
